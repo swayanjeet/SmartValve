@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load crispy_forms_tags %}
+{% include "common/header.html" %}
+
+<body class="animsition">
+    <div class="page-wrapper">
+        <!-- HEADER MOBILE-->
+        {% include "mobile_menu_bar.html" %}
+        <!-- END HEADER MOBILE-->
+
+        <!-- MENU SIDEBAR-->
+        {% include "sidebar_menu.html" %}
+        <!-- END MENU SIDEBAR-->
+        <!-- PAGE CONTAINER-->
+        <div class="page-container">
+            <!-- HEADER DESKTOP-->
+            {% include "top-bar.html" %}
+            <!-- HEADER DESKTOP-->
+
+            <!-- MAIN CONTENT-->
+            <div class="main-content">
+                <div class="section__content section__content--p30">
+                    <div class="container-fluid">
+                        <div class="row">
+                        <div class="col-lg-6">
+                            <!-- TOP CAMPAIGN-->
+                            <div class="top-campaign">
+                                <h3 class="title-3 m-b-30">Create Org Admin</h3>
+                                <form method="post">{% csrf_token %}
+                                {{ form|crispy }}
+                                     <input class="btn btn-primary" type="submit" value="Submit" />
+                                </form>
+                            </div>
+                            <!--  END TOP CAMPAIGN-->
+                        </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="copyright">
+                                    <p>Copyright © 2018 Swayan@Mishra. All rights reserved. Made with <i class="fas fa-heart"></i> in Pune</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END MAIN CONTENT-->
+            <!-- END PAGE CONTAINER-->
+        </div>
+
+    </div>
+
+{% include "common/footer.html" %}
+
+</body>
+
+</html>
+<!-- end document-->

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% include "common/header.html" %}
+
+<body class="animsition">
+    <div class="page-wrapper">
+        <!-- HEADER MOBILE-->
+        {% include "menu-bars/mobile_menu_bar.html" %}
+        <!-- END HEADER MOBILE-->
+
+        <!-- MENU SIDEBAR-->
+        {% include "menu-bars/sidebar_menu.html" %}
+        <!-- END MENU SIDEBAR-->
+        <!-- PAGE CONTAINER-->
+        <div class="page-container">
+            <!-- HEADER DESKTOP-->
+            {% include "menu-bars/top-bar.html" %}
+            <!-- HEADER DESKTOP-->
+
+            <!-- MAIN CONTENT-->
+            <div class="main-content">
+                <div class="section__content section__content--p30">
+                    <div class="container-fluid">
+                        <div class="row">
+                        <div class="col-lg-6">
+                            <!-- TOP CAMPAIGN-->
+                            <div class="top-campaign">
+                                <h3 class="title-3 m-b-30">Organization List</h3>
+                                <div class="table-responsive  m-b-40">
+                                    <table class="table table-condensed">
+                                                                            <thead>
+                                            <tr>
+                                                {% for header in headers %}
+                                                    <td><b>{{ header|upper }}</b></td>
+                                                {% endfor %}
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for org in orgs %}
+                                                 <tr>
+                                                     <td>{{ org.name }}</td>
+                                                     <td>{{ org.slug }}</td>
+                                                     <td>{{ org.id }}</td>
+                                                 <td><a type="button" class="btn btn-warning" href="/organization/{{ org.id }}/edit" target="_blank">Edit</a></td>
+                                                 </tr>
+                                            {% empty %}
+                                                <li>Sorry, no Organizations created yet</li>
+                                            {% endfor %}
+                                            </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!--  END TOP CAMPAIGN-->
+                        </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="copyright">
+                                    <p>Copyright © 2018 Swayan@Mishra. All rights reserved. Made with <i class="fas fa-heart"></i> in Pune</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END MAIN CONTENT-->
+            <!-- END PAGE CONTAINER-->
+        </div>
+
+    </div>
+
+{% include "common/footer.html" %}
+
+</body>
+
+</html>
+<!-- end document-->

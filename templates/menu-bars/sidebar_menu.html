@@ -1,0 +1,69 @@
+        <aside class="menu-sidebar d-none d-lg-block">
+            <div class="logo">
+                <a href="#">
+                    <img src="https://awalk.co.in/img/name.png" height="50%" width="50%" alt="Cool Admin" />
+                </a>
+            </div>
+            <div class="menu-sidebar__content js-scrollbar1">
+                <nav class="navbar-sidebar">
+                    <ul class="list-unstyled navbar__list">
+                        <li class="has-sub">
+                            <a class="js-arrow" href="/dashboard/">
+                                <i class="fas fa-tachometer-alt"></i>Dashboard</a>
+                        </li>
+                        {% if user.role == "SUPER_ADMIN" %}
+                        <li>
+                            <a class="js-arrow" href="#"><i class="fas fa-gears"></i>Organizations</a>
+                                <ul class="list-unstyled navbar__sub-list js-sub-list">
+                                    <li>
+                                        <a href="/organization_create/" data-toggle="modal" data-target="#smallmodal"><i class="fas fa-plus-square"></i>Add New</a>
+                                    </li>
+                                    <li class="active">
+                                        <a href="/organization_list/"><i class="fas fa-group"></i>View All</a>
+                                    </li>
+                                </ul>
+                        </li>
+                        <li>
+                            <a class="js-arrow" href="#"><i class="fas fa-female"></i>Org Admins</a>
+                                <ul class="list-unstyled navbar__sub-list js-sub-list">
+                                    <li>
+                                        <a href="/org_admins/create/"><i class="fas fa-plus-square"></i>Add New</a>
+                                    </li>
+                                    <li>
+                                        <a href="/org_admins/list/"><i class="fas fa-group"></i>View All</a>
+                                    </li>
+                                </ul>
+                        </li>
+                        {% endif %}
+                        {% if user.role == "ORG_ADMIN" or user.role == "SUPER_ADMIN" %}
+                        <li>
+                            <a class="js-arrow" href="#">
+                                <i class="fas fa-group"></i>Users</a>
+                                <ul class="list-unstyled navbar__sub-list js-sub-list">
+                                    <li>
+                                        <a href="/users/create/"><i class="fas fa-plus-square"></i>Add New</a>
+                                    </li>
+                                    <li>
+                                        <a href="/users/list/"><i class="fas fa-group"></i>View All</a>
+                                    </li>
+                                </ul>
+                        </li>
+                        {% endif %}
+                        <li>
+                            <a class="js-arrow" href="#">
+                                <i class="fas fa-bolt"></i>Valves</a>
+                                <ul class="list-unstyled navbar__sub-list js-sub-list">
+                                    {% if user.role == "ORG_ADMIN" or user.role == "SUPER_ADMIN" %}
+                                    <li>
+                                        <a href="/valves/create/"><i class="fas fa-plus-square"></i>Add New</a>
+                                    </li>
+                                    {% endif %}
+                                    <li>
+                                        <a href="/valves/list/"><i class="fas fa-group"></i>View All</a>
+                                    </li>
+                                </ul>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
