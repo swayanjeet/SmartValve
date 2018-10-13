@@ -25,10 +25,11 @@
                         <div class="row">
                         <div class="col-lg-12">
                             <!-- TOP CAMPAIGN-->
-                            <div class="top-campaign">
+                            <div class="top-campaign text-white" style="background-image: -webkit-linear-gradient(90deg, #e4efe9 0%, #93a5cf 100%);">
                                 <h3 class="title-3 m-b-30">Organization Admins List</h3>
                                 <div class="table-responsive  m-b-40">
                                     <table class="table table-condensed">
+                                    {% if org_admins %}
                                 <thead>
                                             <tr>
                                                 {% for header in headers %}
@@ -36,6 +37,7 @@
                                                 {% endfor %}
                                             </tr>
                                             </thead>
+                                    {% endif %}
                                             <tbody>
                                             {% for org_admin in org_admins %}
                                                  <tr>
@@ -53,7 +55,7 @@
                                                  <td>{{ org_admin.account_activated }}</td>
                                                  </tr>
                                             {% empty %}
-                                                <li>Sorry, no Users Created yet</li>
+                                                Sorry, no Org Admins Created yet
                                             {% endfor %}
                                             </tbody>
                                     </table>

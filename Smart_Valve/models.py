@@ -185,6 +185,8 @@ class User(AbstractBaseUser):
                     print("Other Error")
                     raise error
             super(User, self).save(*args, **kwargs)
+        else:
+            super(User, self).save(*args, **kwargs)
 
 
 class Valve(models.Model):

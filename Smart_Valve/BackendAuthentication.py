@@ -30,9 +30,9 @@ class SmsMfaAuth:
         try:
             if "AuthenticationResult" in response:
                 user = User.objects.get(username=username)
-                user.RefreshToken = response["AuthenticationResult"]["RefreshToken"]
-                user.IdToken = response["AuthenticationResult"]["IdToken"]
-                user.AccessToken = response["AuthenticationResult"]["AccessToken"]
+                request.session["RefreshToken"] = response["AuthenticationResult"]["RefreshToken"]
+                request.session["IdToken"] = response["AuthenticationResult"]["IdToken"]
+                request.session["AccessToken"] = response["AuthenticationResult"]["AccessToken"]
                 return user
         except User.DoesNotExist:
             return None
@@ -48,39 +48,46 @@ class SmsMfaAuth:
 
 class AuthenticationUserNamePassword:
 
-    def authenticate(self, request, username=None, password=None):
-        username = request.POST["username"]
-        password = request.POST["password"]
-        print username, password
+    def authenticate(self, request, username=None, password=None, update=False):
         client = boto3.client(AWS_COGNITO_APP_NAME,
                               region_name=AWS_REGION_NAME,
                               aws_access_key_id=base64.b64decode(AWS_ACCESS_KEY_ID),
                               aws_secret_access_key=base64.b64decode(AWS_SECRET_KEY)
                               )
-        response = client.initiate_auth(
-            AuthFlow='USER_PASSWORD_AUTH',
-            AuthParameters={
-                "USERNAME": username,
-                "PASSWORD": password
-            },
-            ClientId=base64.b64decode(APP_CLIENT_ID),
-        )
-        print response
-        try:
-            if "Session" in response:
-                user = User.objects.get(username=username)
-                user.session = response["Session"]
-                return user
-        except User.DoesNotExist:
-            return None
-
-        # client = boto3.client(AWS_COGNITO_APP_NAME,
-        #                       region_name=AWS_REGION_NAME,
-        #                       aws_access_key_id=base64.b64decode(AWS_ACCESS_KEY_ID),
-        #                       aws_secret_access_key=base64.b64decode(AWS_SECRET_KEY)
-        #                       )
-        # response = client.get_user(
-        #                 AccessToken=token
-        # )
-        # return User.objects.get(username=response["Username"])
+        if not update:
+            response = client.initiate_auth(
+                AuthFlow='USER_PASSWORD_AUTH',
+                AuthParameters={
+                    "USERNAME": username,
+                    "PASSWORD": password
+                },
+                ClientId=base64.b64decode(APP_CLIENT_ID),
+            )
+            print response
+            try:
+                if "Session" in response:
+                    user = User.objects.get(username=username)
+                    request.session["CognitoSession"] = response["Session"]
+                    user.session = response["Session"]
+                    return user
+            except User.DoesNotExist:
+                return None
+        elif update:
+            print request.session["CognitoSession"]
+            response = client.respond_to_auth_challenge(
+                ClientId=base64.b64decode(APP_CLIENT_ID),
+                ChallengeName='NEW_PASSWORD_REQUIRED',
+                Session=request.session["CognitoSession"],
+                ChallengeResponses={
+                    "USERNAME": username,
+                    "NEW_PASSWORD": password
+                })
+            print response
+            try:
+                if "Session" in response:
+                    user = User.objects.get(username=username)
+                    request.session["CognitoSession"] = response["Session"]
+                    return user
+            except User.DoesNotExist:
+                return None
 

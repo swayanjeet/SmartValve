@@ -19,54 +19,119 @@
             <!-- HEADER DESKTOP-->
 
             <!-- MAIN CONTENT-->
+        <div class="modal fade" id="smallmodal" tabindex="-1" role="dialog" aria-labelledby="smallmodalLabel" aria-hidden="true" style="display: none;">
+				<div class="modal-dialog modal-sm" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="smallmodalLabel">Error</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">×</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<p>
+								An error occurred while updating the values of the valve. Please try once more.
+							</p>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+						</div>
+					</div>
+				</div>
+			</div>
             <div class="main-content">
                 <div class="section__content section__content--p30">
                     <div class="container-fluid">
                         <div class="row">
-                        <div class="col-lg-12">
-                            <!-- TOP CAMPAIGN-->
-                            <div class="top-campaign">
-                                <h3 class="title-3 m-b-30">Valves List</h3>
-                             <div class="table-responsive  m-b-40">
-                                    <table class="table table-condensed">
 
-                                            <thead>
-                                            <tr>
-                                                {% for header in headers %}
-                                                    <td><b>{{ header|upper }}</b></td>
-                                                {% endfor %}
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {% for valve in valves %}
-                                                 <tr>
-                                                     <td>{{ valve.id }}</td>
-                                                     <td>{{ valve.name }}</td>
-                                                 <td>{{ valve.imei_number }}</td>
-                                                 <td>{{ valve.current_state }}</td>
-                                                 <td>{{ valve.current_status }}</td>
-                                                 <td>{{ valve.status_last_updated_at }}</td>
-                                                     {% if user.role != "USER" %}
-                                                 <td><a type="button" class="btn btn-warning" href="/valves/update/{{ valve.id }}" target="_blank">Edit</a></td>
-                                                    {% endif %}
-                                                 </tr>
-                                            {% empty %}
-                                                <li>Sorry, no valves created yet</li>
-                                            {% endfor %}
-                                            </tbody>
+                            {% for valve in valves %}
+                            <div class="col-md-4">
+                            <div class="card" style="background-image: -webkit-linear-gradient(90deg, #48c6ef 0%, #6f86d6 100%);">
+                                    <div class="card-header">
+                                        <strong class="card-title text-white">{{ valve.name }}</strong>
 
-                                    </table>
-                             </div>
+                                    </div>
+                                    <div class="card-body text-white">
+                                        <h1 class="card-text text-white text-large">62
+{#                                            <b>ID</b>: {{ valve.id }}<hr>#}
+{#                                            <b>NAME</b>: {{ valve.name }}<hr>#}
+{#                                            <b>IMEI NUMBER</b> : {{ valve.imei_number }}<hr>#}
+{#                                            <h3>CURRENT STATE</h3> : {{ valve.current_state }}<hr>#}
+{#                                            <b>CURRENT STATUS</b> : {{ valve.current_status }}<hr>#}
+
+
+                                        </h1>
+                                        <p class="card-text text-white" id="last_updated_at_{{ valve.id }}">LAST UPDATED AT : {{ valve.status_last_updated_at }}</p>
+
+
+                                    </div>
+                                    <div class="card-footer">
+                                    <a type="button" class="btn btn-primary float-left mt-1" style="border: 0px;" href="/valves/update/{{ valve.id }}" target="_blank">Edit</a>
+                                        <span class="toggle_wrapper">
+                                        <label class="checkbox-inline float-right mt-1" id ="card_button_{{ valve.id }}">
+                                        <img src="http://www.bba-reman.com/images/fbloader.gif" id = "loader_{{ valve.id }}" class="loader"/>
+                                        {% if valve.current_state == "OPEN" %}
+                                        <input type="checkbox" id="state_button_{{ valve.id }}" class="valve_state_change" valve_id="{{ valve.id }}" checked data-toggle="toggle" data-on="OPEN" data-off="CLOSED" data-onstyle="primary" data-offstyle="secondary">
+                                        {% elif valve.current_state == "CLOSED" %}
+                                        <input type="checkbox" id="state_button_{{ valve.id }}" class="valve_state_change" valve_id="{{ valve.id }}" data-toggle="toggle" data-on="OPEN" data-off="CLOSED" data-onstyle="primary" data-offstyle="secondary">
+                                        {% endif %}
+                                        </label>
+                                        </span>
+
+                                    </div>
+
+
+                                </div>
                             </div>
-                            <!--  END TOP CAMPAIGN-->
-                        </div>
+                                {% empty %}<h3>Sorry, no valves created yet</h3>
+                            {% endfor %}
+{#                        <div class="col-lg-12">#}
+{#                            <!-- TOP CAMPAIGN-->#}
+{#                            <div class="top-campaign">#}
+{#                                <h3 class="title-3 m-b-30">Valves List</h3>#}
+{#                             <div class="table-responsive  m-b-40">#}
+{#                                    <table class="table table-condensed">#}
+{#                                           {% if valves %}#}
+{#                                            <thead>#}
+{#                                            <tr>#}
+{#                                                {% for header in headers %}#}
+{#                                                    <td><b>{{ header|upper }}</b>#}
+{#                                                    {% empty %}<br>#}
+{#                                                {% endfor %}#}
+{#                                            </tr>#}
+{#                                            </thead>#}
+{#                                            {% endif %}#}
+{#                                            <tbody>#}
+{#                                            {% for valve in valves %}#}
+{#                                                 <tr>#}
+{#                                                     <td>{{ valve.id }}</td>#}
+{#                                                     <td>{{ valve.name }}</td>#}
+{#                                                 <td>{{ valve.imei_number }}</td>#}
+{#                                                 <td>{{ valve.current_state }}</td>#}
+{#                                                 <td>{{ valve.current_status }}</td>#}
+{#                                                 <td>{{ valve.status_last_updated_at }}</td>#}
+{#                                                     {% if user.role != "USER" %}#}
+{#                                                 <td><a type="button" class="btn btn-warning" href="/valves/update/{{ valve.id }}" target="_blank">Edit</a></td>#}
+{#                                                    {% endif %}#}
+{#                                                 </tr>#}
+{#                                            {% empty %}#}
+{#                                                <h3>Sorry, no valves created yet</h3>#}
+{#                                            {% endfor %}#}
+{#                                            </tbody>#}
+{##}
+{##}
+{#                                    </table>#}
+{#                             </div>#}
+{#                            </div>#}
+{#                            <!--  END TOP CAMPAIGN-->#}
+{#                        </div>#}
                         </div>
                         {% if user.role == "ORG_ADMIN" or user.role == "SUPER_ADMIN" %}
                         {% for valve in valves%}
                         <div class="row">
                         <div class="col-lg-6">
                             <!-- TOP CAMPAIGN-->
-                            <div class="top-campaign">
+                            <div class="top-campaign text-white" style="background-image: -webkit-linear-gradient(90deg, #a3bded 0%, #6991c7 100%);">
                                 <h3 class="title-3 m-b-30">Users configured for Valve : {{ valve.name }}</h3>
                              <div class="table-responsive  m-b-40">
                                     <table class="table table-condensed">
@@ -75,6 +140,7 @@
                                             <tr>
                                                 {% for header in inner_headers %}
                                                     <td><b>{{ header|upper }}</b></td>
+                                                    {% empty %}<br>
                                                 {% endfor %}
                                             </tr>
                                             </thead>
@@ -87,7 +153,7 @@
                                                      <td>{{ user.organization }}</td>
                                                  </tr>
                                             {% empty %}
-                                                <li>Sorry, no valves created yet</li>
+                                                <h3>Sorry, no valves created yet</h3>
                                             {% endfor %}
                                             </tbody>
 
@@ -116,6 +182,80 @@
     </div>
 
 {% include "common/footer.html" %}
+<script>
+   $(function() {
+    $(".loader").css("display", "none");
+    $('.toggle_wrapper').click(function(e){
+    e.stopPropagation();
+    current_elem = $(this).find(".valve_state_change")
+    valve_id = $(current_elem).attr('valve_id');
+    $("#card_button_"+valve_id+" .toggle").css("display", "none");
+    $("#loader_"+valve_id).css("display", "block");
+    current_state = $(current_elem).val();
+    if (current_state === "on"){
+        current_state = "CLOSED"
+    }
+    else if (current_state === "off"){
+        current_state = "OPEN"
+    }
+      $.post(
+      "http://localhost:8000/valves/update_state",
+      {
+          "valve_id": valve_id,
+          "state": current_state
+      },
+      function(data, status) {
+          if (status==="success"){
+              $("#loader_" + valve_id).css("display", "none");
+              $("#card_button_" + valve_id + " .toggle").css("display", "block");
+              console.log(data);
+              if (data["status"] ==="SUCCESS") {
+                     $(current_elem).bootstrapToggle('toggle')
+                     $("#last_updated_at_"+valve_id).html("LAST UPDATED AT : "+data["last_updated_timestamp"]);
+              }else{
+                  $('#smallmodal').modal('show');
+              }
+          }
+          else{
+                $('#smallmodal').modal('show');
+          }
+      }
+    );
+    alert(current_state);
+{#    $(this).find(".valve_state_change").bootstrapToggle('toggle');#}
+
+    });
+{#    $('.valve_state_change').change(function(e) {#}
+{#      valve_id = $(this).attr('valve_id');#}
+{#      $("#card_button_"+valve_id+" .toggle").css("display", "none");#}
+{#      $("#loader_"+valve_id).css("display", "block");#}
+{#      current_state = $(this).val();#}
+{##}
+{#      $.post(#}
+{#          "http://localhost:8000/valves/update_state",#}
+{#          {#}
+{#              "valve_id": valve_id,#}
+{#              "state": current_state#}
+{#          },#}
+{#          function(data, status) {#}
+{#              if (status==="success"){#}
+{#                  $("#loader_" + valve_id).css("display", "none");#}
+{#                  $("#card_button_" + valve_id + " .toggle").css("display", "block");#}
+{#                  if (data["status"] ==="SUCCESS") {#}
+{##}
+{#                  }else{#}
+{#                      $('#smallmodal').modal('show');#}
+{#                  }#}
+{#              }#}
+{#              else{#}
+{#                    $('#smallmodal').modal('show');#}
+{#              }#}
+{#          }#}
+{#      );#}
+{#    })#}
+  })
+
+</script>
 
 </body>
 

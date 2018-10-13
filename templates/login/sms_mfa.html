@@ -18,7 +18,7 @@
                             <form action="/authenticate/" method="post">{% csrf_token %}
                                 <div class="form-group">
                                     <label>SMS MFA</label>
-                                    <input class="au-input au-input--full" type="password" name="mfa" placeholder="Password" required>
+                                    <input class="au-input au-input--full" type="password" name="mfa" placeholder="Password">
                                     <input type="hidden" name="username" value="{{  user.username }}">
                                     <input type="hidden" name="session" value="{{  user.session }}">
                                 </div>
@@ -30,7 +30,8 @@
 {#                                        <a href="#">Forgotten Password?</a>#}
 {#                                    </label>#}
                                 </div>
-                                <button class="au-btn au-btn--block au-btn--green m-b-20" type="submit">Enter OTP</button>
+                                <button class="au-btn au-btn--block au-btn--green m-b-20" type="submit" name="action" value="enter_otp">Enter OTP</button>
+{#                                <button class="au-btn au-btn--block au-btn--green m-b-20" type="submit" name="action" value="resend_otp">Resend OTP</button>#}
                                 <!-- <div class="social-login-content">
                                     <div class="social-button">
                                         <button class="au-btn au-btn--block au-btn--blue m-b-20">sign in with facebook</button>

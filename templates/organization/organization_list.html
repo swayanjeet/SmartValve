@@ -25,8 +25,8 @@
                         <div class="row">
                         <div class="col-lg-6">
                             <!-- TOP CAMPAIGN-->
-                            <div class="top-campaign">
-                                <h3 class="title-3 m-b-30">Organization List</h3>
+                            <div class="top-campaign text-white" style="background-image: -webkit-linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);">
+                                <h3 class="title-3 m-b-30 text-white">Organization List</h3>
                                 <div class="table-responsive  m-b-40">
                                     <table class="table table-condensed">
                                                                             <thead>
@@ -42,7 +42,7 @@
                                                      <td>{{ org.name }}</td>
                                                      <td>{{ org.slug }}</td>
                                                      <td>{{ org.id }}</td>
-                                                 <td><a type="button" class="btn btn-warning" href="/organization/{{ org.id }}/edit" target="_blank">Edit</a></td>
+                                                 <td><a type="button" class="btn btn-primary" href="/organization/{{ org.id }}/edit" target="_blank">Edit</a></td>
                                                  </tr>
                                             {% empty %}
                                                 <li>Sorry, no Organizations created yet</li>
