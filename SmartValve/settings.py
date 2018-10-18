@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Smart_Valve.apps.SmartValveConfig',
     'crispy_forms',
+    'widget_tweaks'
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -84,7 +85,7 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+                'django.contrib.messages.context_processors.messages'
             ],
         },
     },

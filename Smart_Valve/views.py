@@ -11,31 +11,26 @@ from datetime import datetime
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-
+from Smart_Valve.CognitoConstants import *
 import time
 
-AWS_COGNITO_APP_NAME = 'cognito-idp'
-AWS_USER_POOL_ID = 'us-east-2_5NYzGJJKB'
-AWS_REGION_NAME = "us-east-2"
-AWS_ACCESS_KEY_ID = "QUtJQUpJM080VlNKV1o3TVI1WEE="
-AWS_SECRET_KEY = "eHA1OXFkTnM2QThEay9HQzNmbUhGbnJVSXFERVE0Z2NPNHo2NTJkQw=="
-APP_CLIENT_ID = "NHQyb25ibGdiMDN2ZmFlZmJ1ZzR2MzI4bg=="
 
 class LoginView(View):
     context_dict={"title": "Login Page", "message_visible_flag": "none"}
 
     def post(self, request):
+        username = None
         try:
             username = request.POST["username"]
             password = request.POST["password"]
             user = authenticate(request=request, username=username, password=password, update=False)
             if user is not None and user.account_activated:
-                return render(request, "sms_mfa.html", {"title": "SMS Authentication", "user": user})
+                return render(request, "sms_mfa.html", {"title": "SMS Authentication"}, self.context_dict)
             elif not user.account_activated:
-                return render(request, "update_temp_password.html", {"title": "Update Password", "user": user})
+                return render(request, "update_temp_password.html", {"title": "Update Password"}, self.context_dict)
             else:
                 self.context_dict["message_visible_flag"] = "block"
-                self.context_dict["message_class"] = "alert alert-danger"
+                self.context_dict["message_class"] = "danger"
                 self.context_dict["message"] = "Username and Password couldn't be authenticated !!"
                 return render(request, "login_view.html", self.context_dict)
         except ClientError as error:
@@ -43,19 +38,26 @@ class LoginView(View):
             if error.response['Error']['Code'] == 'NotAuthorizedException':
                 print "Wrong Username Password"
                 self.context_dict["message_visible_flag"] = "block"
-                self.context_dict["message_class"] = "alert alert-danger"
+                self.context_dict["message_class"] = "danger"
                 self.context_dict["message"] = "Username and Password are wrong"
+                return render(request, "login_view.html", self.context_dict)
+            elif error.response['Error']['Code'] == "UserNotFoundException":
+                print "User is not found with username {0}".format(username)
+                self.context_dict["message_visible_flag"] = "block"
+                self.context_dict["message_class"] = "danger"
+                self.context_dict["message"] = "your username doesn't exist"
                 return render(request, "login_view.html", self.context_dict)
             else:
                 print "Unexpected error: %s" % error
                 print "Wrong Username Password"
                 self.context_dict["message_visible_flag"] = "block"
-                self.context_dict["message_class"] = "alert alert-danger"
+                self.context_dict["message_class"] = "danger"
                 self.context_dict["message"] = "Unexpected error occurred. Please login again"
                 return render(request, "login_view.html", self.context_dict)
 
     def get(self, request):
-        return render(request, 'login_view.html')
+        self.context_dict["message_visible_flag"] = "none"
+        return render(request, 'login_view.html', self.context_dict)
 
 
 class UpdateTemporaryPassword(View):
@@ -65,7 +67,7 @@ class UpdateTemporaryPassword(View):
         try:
             new_password = request.POST["new_password"]
             new_password_once_more = request.POST["new_password_once_more"]
-            username = request.POST["username"]
+            username = request.session["username"]
             if new_password != new_password_once_more:
                 self.context_dict["message_visible_flag"] = "block"
                 self.context_dict["message_class"] = "alert alert-danger"
@@ -77,7 +79,7 @@ class UpdateTemporaryPassword(View):
                     user.account_activated = True
                     user.save()
                     print "Modified account activated flag"
-                    return render(request, "sms_mfa.html", {"title": "SMS Authentication", "user": user})
+                    return render(request, "sms_mfa.html", {"title": "SMS Authentication"})
                 else:
                     self.context_dict["message_visible_flag"] = "block"
                     self.context_dict["message_class"] = "alert alert-danger"
@@ -92,7 +94,6 @@ class UpdateTemporaryPassword(View):
                 return render(request, "update_temp_password.html", self.context_dict)
             else:
                 print "Unexpected error: %s" % error
-                print "Wrong Username Password"
                 self.context_dict["message_visible_flag"] = "block"
                 self.context_dict["message_class"] = "alert alert-danger"
                 self.context_dict["message"] = "Unexpected error occurred. Please login again"
@@ -104,37 +105,53 @@ class UpdateTemporaryPassword(View):
 
 
 class AuthenticateView(View):
-    context_dict = {}
     resend_otp_count = 0
+    context_dict = {"message_visible_flag":"none"}
 
     def post(self, request):
-        if request.POST["action"]=="enter_otp":
-            mfa = request.POST["mfa"]
-            username = request.POST["username"]
-            session = request.session["CognitoSession"]
-            print session
-            user = authenticate(request=request, username=username, mfa=mfa, session=session)
-            if user is not None:
-                login(request, user)
-                return redirect('dashboard')
-        elif request.POST["action"]=="resend_otp":
-            if self.resend_otp_count <= 2:
-                username = request.POST["username"]
+        try:
+            if request.POST["action"]=="enter_otp":
+                mfa = request.POST["mfa"]
+                username = request.session["username"]
                 session = request.session["CognitoSession"]
-                conext_dict = dict()
-                conext_dict["user"] = {"username": username, "session": session}
-                client = boto3.client(AWS_COGNITO_APP_NAME,
-                                      region_name=AWS_REGION_NAME,
-                                      aws_access_key_id=base64.b64decode(AWS_ACCESS_KEY_ID),
-                                      aws_secret_access_key=base64.b64decode(AWS_SECRET_KEY)
-                                      )
-                response = client.resend_confirmation_code(
-                    ClientId=base64.b64decode(APP_CLIENT_ID),
-                    Username=username
-                    )
-                return render(request, "sms_mfa.html", conext_dict)
-            else:
-                redirect('/login/')
+                print session
+                user = authenticate(request=request, username=username, mfa=mfa, session=session)
+                if user is not None:
+                    login(request, user)
+                    return redirect('dashboard')
+            elif request.POST["action"]=="resend_otp":
+                if self.resend_otp_count <= 2:
+                    username = request.POST["username"]
+                    session = request.session["CognitoSession"]
+                    conext_dict = dict()
+                    conext_dict["user"] = {"username": username, "session": session}
+                    client = boto3.client(AWS_COGNITO_APP_NAME,
+                                          region_name=AWS_REGION_NAME,
+                                          aws_access_key_id=base64.b64decode(AWS_ACCESS_KEY_ID),
+                                          aws_secret_access_key=base64.b64decode(AWS_SECRET_KEY)
+                                          )
+                    response = client.resend_confirmation_code(
+                        ClientId=base64.b64decode(APP_CLIENT_ID),
+                        Username=username
+                        )
+                    return render(request, "sms_mfa.html", conext_dict)
+                else:
+                    redirect('/login/')
+        except ClientError as error:
+            print error
+            if error.response['Error']['Code'] == 'CodeMismatchException':
+                print "Wrong Username Password"
+                self.context_dict["message_visible_flag"] = "block"
+                self.context_dict["message_class"] = "danger"
+                self.context_dict["message"] = "OTP entered is wrong. Please enter correct OTP"
+                return render(request, "sms_mfa.html", self.context_dict)
+            elif error.response['Error']['Code'] == 'ExpiredCodeException':
+                print "Wrong Username Password"
+                self.context_dict["message_visible_flag"] = "block"
+                self.context_dict["message_class"] = "danger"
+                self.context_dict["message"] = "OTP is expired. Please login again"
+                return render(request, "login_view.html", self.context_dict)
+
             # return render(request, "dashboard.html", self.context_dict)
 
     def get(self, request):
@@ -199,6 +216,9 @@ class LogoutView(View):
 
     def get(self, request):
         logout(request)
+        for key in ['username','CognitoSession', 'IdToken', 'RefreshToken', 'AccessToken']:
+            if key in request.session:
+                del request.session[key]
         return redirect('/login/')
 
 

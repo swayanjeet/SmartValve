@@ -18,7 +18,7 @@ class ValveCreateView(CreateView):
         if self.request.user.role=="ORG_ADMIN":
             form.fields['users'].queryset = User.objects.filter(organization=self.request.user.organization, role='USER')
         elif self.request.user.role=="SUPER_ADMIN":
-            form.fields['users'].queryset = User.objects.filter(role='USER')
+            form.fields['users'].queryset = User.objects.filter(role__in=['USER', 'ORG_ADMIN'])
         return form
 
 class ValveListView(ListView):
@@ -31,10 +31,10 @@ class ValveListView(ListView):
         if self.request.user.role=="USER":
             valves = Valve.objects.filter(users=self.request.user)
         elif self.request.user.role=="ORG_ADMIN":
-            users = User.objects.filter(organization=self.request.user.organization, role="USER")
+            users = User.objects.filter(organization=self.request.user.organization, role__in=["USER", "ORG_ADMIN"])
             valves = Valve.objects.filter(users__in=users.all()).distinct()
         elif self.request.user.role=="SUPER_ADMIN":
-            users = User.objects.filter(role="USER")
+            users = User.objects.filter(role__in=["USER","ORG_ADMIN"])
             valves = Valve.objects.filter(users__in=users.all()).distinct()
         return valves
 

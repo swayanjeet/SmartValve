@@ -3,33 +3,46 @@
 
 {% include "common/header.html" %}
 
-<body class="animsition">
-    <div class="page-wrapper">
-        <!-- HEADER MOBILE-->
-        {% include "menu-bars/mobile_menu_bar.html" %}
-        <!-- END HEADER MOBILE-->
+<body class="theme-red">
+    <!-- Page Loader -->
+    <div class="page-loader-wrapper">
+        <div class="loader">
+            <div class="preloader">
+                <div class="spinner-layer pl-red">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+            </div>
+            <p>Please wait...</p>
+        </div>
+    </div>
 
-        <!-- MENU SIDEBAR-->
+    <div class="overlay"></div>
+
+    <!--TOP BAR-->
+    {% include "menu-bars/top-bar.html" %}
+
+    <section>
         {% include "menu-bars/sidebar_menu.html" %}
-        <!-- END MENU SIDEBAR-->
-        <!-- PAGE CONTAINER-->
-        <div class="page-container">
-            <!-- HEADER DESKTOP-->
-            {% include "menu-bars/top-bar.html" %}
-            <!-- HEADER DESKTOP-->
+    </section>
 
-            <!-- MAIN CONTENT-->
-            <div class="main-content">
-                <div class="section__content section__content--p30">
-                    <div class="container-fluid">
-                        <div class="row">
-                        <div class="col-lg-12">
-                            <!-- TOP CAMPAIGN-->
-                            <div class="top-campaign text-white" style="background-image: -webkit-linear-gradient(90deg, #e4efe9 0%, #93a5cf 100%);">
-                                <h3 class="title-3 m-b-30">Organization Admins List</h3>
-                                <div class="table-responsive  m-b-40">
-                                    <table class="table table-condensed">
-                                    {% if org_admins %}
+    <div class="overlay"></div>
+    <section class="content">
+        <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                    <div class="card">
+                        <div class="header">
+                            <h2>ORGANIZATION ADMINS LIST</h2>
+                        </div>
+                        <div class="body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped table-hover user_table" >
+                                                                        {% if org_admins %}
                                 <thead>
                                             <tr>
                                                 {% for header in headers %}
@@ -53,35 +66,49 @@
                                                  <td>{{ org_admin.phone_number }}</td>
                                                  <td>{{ org_admin.is_active }}</td>
                                                  <td>{{ org_admin.account_activated }}</td>
+                                                <td>{{ org_admin.id }}</td>
+                                                 <td>{{ org_admin.id }}</td>
                                                  </tr>
                                             {% empty %}
                                                 Sorry, no Org Admins Created yet
                                             {% endfor %}
                                             </tbody>
-                                    </table>
-                            </div>
-                            </div>
-                            <!--  END TOP CAMPAIGN-->
-                        </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="copyright">
-                                    <p>Copyright © 2018 Swayan@Mishra. All rights reserved. Made with <i class="fas fa-heart"></i> in Pune</p>
-                                </div>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- END MAIN CONTENT-->
-            <!-- END PAGE CONTAINER-->
         </div>
-
-    </div>
-
+        </div>
+    </section>
 {% include "common/footer.html" %}
-
+<script>
+    $('.user_table').DataTable({
+        responsive: true,
+        "columnDefs": [
+            {
+                // The `data` parameter refers to the data for the cell (defined by the
+                // `data` option, which defaults to the column being worked with, in
+                // this case `data: 0`.
+                "render": function (data, type, row) {
+                    return "<a type=\"button\" class=\"btn bg-yellow waves-effect\" href=\"/org_admins/update/" + data + "\" target=\"_blank\">"
+                        + "<i class=\"material-icons\">mode_edit</i></a>";
+                },
+                "targets": 12
+            },
+            {
+                // The `data` parameter refers to the data for the cell (defined by the
+                // `data` option, which defaults to the column being worked with, in
+                // this case `data: 0`.
+                "render": function ( data, type, row ) {
+                    return "<a type=\"button\" class=\"btn bg-red waves-effect\" href=\"/org_admins/delete/"+data+"/delete\" target=\"_blank\">"
+                         +"<i class=\"material-icons\">close</i></a>";
+                },
+                "targets": 13
+            }
+            ]
+    });
+</script>
 </body>
 
 </html>

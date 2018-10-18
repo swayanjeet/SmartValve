@@ -3,76 +3,93 @@
 
 {% include "common/header.html" %}
 
-<body class="animsition">
-    <div class="page-wrapper">
-        <!-- HEADER MOBILE-->
-        {% include "menu-bars/mobile_menu_bar.html" %}
-        <!-- END HEADER MOBILE-->
+<body class="theme-red">
+    <!-- Page Loader -->
+    <div class="page-loader-wrapper">
+        <div class="loader">
+            <div class="preloader">
+                <div class="spinner-layer pl-red">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+            </div>
+            <p>Please wait...</p>
+        </div>
+    </div>
 
-        <!-- MENU SIDEBAR-->
+    <div class="overlay"></div>
+
+    <!--TOP BAR-->
+    {% include "menu-bars/top-bar.html" %}
+
+    <section>
         {% include "menu-bars/sidebar_menu.html" %}
-        <!-- END MENU SIDEBAR-->
-        <!-- PAGE CONTAINER-->
-        <div class="page-container">
-            <!-- HEADER DESKTOP-->
-            {% include "menu-bars/top-bar.html" %}
-            <!-- HEADER DESKTOP-->
+    </section>
 
-            <!-- MAIN CONTENT-->
-            <div class="main-content">
-                <div class="section__content section__content--p30">
-                    <div class="container-fluid">
-                        <div class="row">
-                        <div class="col-lg-6">
-                            <!-- TOP CAMPAIGN-->
-                            <div class="top-campaign text-white" style="background-image: -webkit-linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);">
-                                <h3 class="title-3 m-b-30 text-white">Organization List</h3>
-                                <div class="table-responsive  m-b-40">
-                                    <table class="table table-condensed">
-                                                                            <thead>
-                                            <tr>
-                                                {% for header in headers %}
-                                                    <td><b>{{ header|upper }}</b></td>
-                                                {% endfor %}
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {% for org in orgs %}
+    <div class="overlay"></div>
+    <section class="content">
+        <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                    <div class="card">
+                        <div class="header">
+                            <h2>ORGANIZATION LIST</h2>
+                        </div>
+                        <div class="body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped table-hover dataTable" id="org-list-table">
+                                    <thead>
+                                        <tr>
+                                          {% for header in headers %}
+                                                    <td>{{ header|upper }}</td>
+                                                    {% empty %}<br>
+                                          {% endfor %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                      {% for org in orgs %}
                                                  <tr>
                                                      <td>{{ org.name }}</td>
                                                      <td>{{ org.slug }}</td>
                                                      <td>{{ org.id }}</td>
-                                                 <td><a type="button" class="btn btn-primary" href="/organization/{{ org.id }}/edit" target="_blank">Edit</a></td>
                                                  </tr>
                                             {% empty %}
                                                 <li>Sorry, no Organizations created yet</li>
                                             {% endfor %}
-                                            </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <!--  END TOP CAMPAIGN-->
-                        </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="copyright">
-                                    <p>Copyright © 2018 Swayan@Mishra. All rights reserved. Made with <i class="fas fa-heart"></i> in Pune</p>
-                                </div>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- END MAIN CONTENT-->
-            <!-- END PAGE CONTAINER-->
         </div>
-
-    </div>
-
+        </div>
+    </section>
 {% include "common/footer.html" %}
-
+<script>
+    $('#org-list-table').DataTable({
+        responsive: true,
+        "columnDefs": [
+            {
+                // The `data` parameter refers to the data for the cell (defined by the
+                // `data` option, which defaults to the column being worked with, in
+                // this case `data: 0`.
+                "render": function ( data, type, row ) {
+                    return "<a type=\"button\" class=\"btn bg-yellow waves-effect\" href=\"/organization/"+data+"/edit\" target=\"_blank\">"
+                         +"<i class=\"material-icons\">mode_edit</i></a>";
+                },
+                "targets": 2
+            }
+            ]
+    });
+</script>
 </body>
-
 </html>
-<!-- end document-->
+
+
+
+

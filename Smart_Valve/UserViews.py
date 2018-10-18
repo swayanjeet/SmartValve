@@ -1,11 +1,15 @@
-from django.views.generic import CreateView, ListView, UpdateView
+from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from Smart_Valve.models import Organization
 from django.shortcuts import render, redirect, HttpResponse, render_to_response
 from django.contrib.auth import authenticate, login
 from Smart_Valve.models import User
 from django.template import Context, RequestContext
+from botocore.exceptions import ClientError
+from django import forms
+from Smart_Valve.CognitoConstants import *
 import boto3
 import base64
+
 
 
 class UserCreateView(CreateView):
@@ -48,4 +52,58 @@ class UserListView(ListView):
         context["headers"] = [f.name.replace("_", " ")
                                    for f in User._meta.get_fields()
                                    if f.name.upper() not in ["PASSWORD", "LOGENTRY", "VALVE"]]
+        context["headers"] += ["EDIT", "DELETE"]
         return context
+
+
+class UserEditView(UpdateView):
+    model = User
+    fields = ['first_name', 'last_name', 'email_address', 'phone_number']
+    template_name = 'Users/user_update.html'
+    success_url = '/users/list/'
+
+    def form_valid(self, form):
+        try:
+            model = form.save(commit=False)
+            print model.username
+            client = boto3.client(AWS_COGNITO_APP_NAME,
+                                  region_name=AWS_REGION_NAME,
+                                  aws_access_key_id=base64.b64decode(AWS_ACCESS_KEY_ID),
+                                  aws_secret_access_key=base64.b64decode(AWS_SECRET_KEY)
+                                  )
+            response = client.admin_update_user_attributes(
+                UserPoolId=AWS_USER_POOL_ID,
+                Username=model.username,
+                UserAttributes=[
+                    {
+                        'Name': 'email',
+                        'Value': model.email_address
+                    },
+                    {
+                        'Name': 'phone_number',
+                        'Value': "+91" + str(model.phone_number)
+                    },
+                    {
+                        'Name': 'custom:user_type',
+                        'Value': model.role
+                    },
+                    {
+                        'Name': 'custom:organization',
+                        'Value': model.organization.name
+                    }
+                ]
+            )
+
+        except ClientError as error:
+            print error
+            if error.response['Error']['Code'] == 'UserNotFoundException':
+                print "Wrong Username Password"
+                raise forms.ValidationError("User doesn't exist")
+        return super(UserEditView, self).form_valid(form)
+
+
+class UserDeleteView(DeleteView):
+    model = User
+    template_name = 'Users/user_delete.html'
+    success_url = '/users/list'
+    fields = ['first_name', 'last_name', 'email_address', 'phone_number']

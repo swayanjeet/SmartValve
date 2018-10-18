@@ -1,14 +1,8 @@
-from django.conf import Settings
 from Smart_Valve.models import User
+from Smart_Valve.CognitoConstants import *
 import base64
 import boto3
 
-AWS_COGNITO_APP_NAME = 'cognito-idp'
-AWS_USER_POOL_ID = 'us-east-2_5NYzGJJKB'
-AWS_REGION_NAME = "us-east-2"
-AWS_ACCESS_KEY_ID = "QUtJQUpJM080VlNKV1o3TVI1WEE="
-AWS_SECRET_KEY = "eHA1OXFkTnM2QThEay9HQzNmbUhGbnJVSXFERVE0Z2NPNHo2NTJkQw=="
-APP_CLIENT_ID = "NHQyb25ibGdiMDN2ZmFlZmJ1ZzR2MzI4bg=="
 
 
 class SmsMfaAuth:
@@ -33,6 +27,7 @@ class SmsMfaAuth:
                 request.session["RefreshToken"] = response["AuthenticationResult"]["RefreshToken"]
                 request.session["IdToken"] = response["AuthenticationResult"]["IdToken"]
                 request.session["AccessToken"] = response["AuthenticationResult"]["AccessToken"]
+                request.session["username"] = username
                 return user
         except User.DoesNotExist:
             return None
@@ -68,7 +63,7 @@ class AuthenticationUserNamePassword:
                 if "Session" in response:
                     user = User.objects.get(username=username)
                     request.session["CognitoSession"] = response["Session"]
-                    user.session = response["Session"]
+                    request.session["username"] = username
                     return user
             except User.DoesNotExist:
                 return None
@@ -87,6 +82,7 @@ class AuthenticationUserNamePassword:
                 if "Session" in response:
                     user = User.objects.get(username=username)
                     request.session["CognitoSession"] = response["Session"]
+                    request.session["username"] = username
                     return user
             except User.DoesNotExist:
                 return None

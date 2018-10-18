@@ -1,69 +1,108 @@
-        <aside class="menu-sidebar d-none d-lg-block">
-            <div class="logo">
-                <a href="#">
-                    <img src="https://awalk.co.in/img/name.png" height="50%" width="50%" alt="Cool Admin" />
-                </a>
+<section>
+<aside id="leftsidebar" class="sidebar">
+            <!-- User Info -->
+            <div class="user-info">
+                <div class="image">
+                    <img src="/static/images/user.png" width="48" height="48" alt="User" />
+                </div>
+                <div class="info-container">
+                    <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ user.first_name }}</div>
+                    <div class="email">{{ user.email_address }}</div>
+                    <div class="btn-group user-helper-dropdown">
+                        <i class="material-icons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">keyboard_arrow_down</i>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a href="javascript:void(0);"><i class="material-icons">person</i>Profile</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="/logout/"><i class="material-icons">input</i>Sign Out</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-            <div class="menu-sidebar__content js-scrollbar1">
-                <nav class="navbar-sidebar">
-                    <ul class="list-unstyled navbar__list">
-                        <li class="has-sub">
-                            <a class="js-arrow" href="/dashboard/">
-                                <i class="fas fa-tachometer-alt"></i>Dashboard</a>
-                        </li>
-                        {% if user.role == "SUPER_ADMIN" %}
-                        <li>
-                            <a class="js-arrow" href="#"><i class="fas fa-gears"></i>Organizations</a>
-                                <ul class="list-unstyled navbar__sub-list js-sub-list">
+            <!-- #User Info -->
+            <!-- Menu -->
+            <div class="menu">
+                <ul class="list">
+                    <li class="header">MAIN NAVIGATION</li>
+                    <li class="active">
+                        <a href="/dashboard/">
+                            <i class="material-icons">home</i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    {% if user.role == "SUPER_ADMIN" %}
+                    <li>
+                        <a href="javascript:void(0);" class="menu-toggle">
+                            <i class="material-icons">widgets</i>
+                            <span>Organizations</span>
+                        </a>
+                        <ul class="ml-menu">
                                     <li>
-                                        <a href="/organization_create/" data-toggle="modal" data-target="#smallmodal"><i class="fas fa-plus-square"></i>Add New</a>
-                                    </li>
-                                    <li class="active">
-                                        <a href="/organization_list/"><i class="fas fa-group"></i>View All</a>
-                                    </li>
-                                </ul>
-                        </li>
-                        <li>
-                            <a class="js-arrow" href="#"><i class="fas fa-female"></i>Org Admins</a>
-                                <ul class="list-unstyled navbar__sub-list js-sub-list">
-                                    <li>
-                                        <a href="/org_admins/create/"><i class="fas fa-plus-square"></i>Add New</a>
+                                        <a href="/organization_create/">New</a>
                                     </li>
                                     <li>
-                                        <a href="/org_admins/list/"><i class="fas fa-group"></i>View All</a>
+                                        <a href="/organization_list/">View All</a>
                                     </li>
-                                </ul>
-                        </li>
-                        {% endif %}
-                        {% if user.role == "ORG_ADMIN" or user.role == "SUPER_ADMIN" %}
-                        <li>
-                            <a class="js-arrow" href="#">
-                                <i class="fas fa-group"></i>Users</a>
-                                <ul class="list-unstyled navbar__sub-list js-sub-list">
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0);" class="menu-toggle">
+                            <i class="material-icons">widgets</i>
+                            <span>Organization Admins</span>
+                        </a>
+                        <ul class="ml-menu">
                                     <li>
-                                        <a href="/users/create/"><i class="fas fa-plus-square"></i>Add New</a>
+                                        <a href="/org_admins/create/">New</a>
                                     </li>
                                     <li>
-                                        <a href="/users/list/"><i class="fas fa-group"></i>View All</a>
+                                        <a href="/org_admins/list/">View All</a>
                                     </li>
-                                </ul>
-                        </li>
-                        {% endif %}
-                        <li>
-                            <a class="js-arrow" href="#">
-                                <i class="fas fa-bolt"></i>Valves</a>
-                                <ul class="list-unstyled navbar__sub-list js-sub-list">
+                        </ul>
+                    </li>
+                    {% endif %}
+                    {% if user.role == "ORG_ADMIN" or user.role == "SUPER_ADMIN" %}
+                    <li>
+                        <a href="javascript:void(0);" class="menu-toggle">
+                            <i class="material-icons">widgets</i>
+                            <span>Users</span>
+                        </a>
+                        <ul class="ml-menu">
+                                    <li>
+                                        <a href="/users/create/">New</a>
+                                    </li>
+                                    <li>
+                                        <a href="/users/list/">View All</a>
+                                    </li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    <li>
+                        <a href="javascript:void(0);" class="menu-toggle">
+                            <i class="material-icons">widgets</i>
+                            <span>Valves</span>
+                        </a>
+                        <ul class="ml-menu">
                                     {% if user.role == "ORG_ADMIN" or user.role == "SUPER_ADMIN" %}
                                     <li>
-                                        <a href="/valves/create/"><i class="fas fa-plus-square"></i>Add New</a>
+                                        <a href="/valves/create/">New</a>
                                     </li>
                                     {% endif %}
                                     <li>
-                                        <a href="/valves/list/"><i class="fas fa-group"></i>View All</a>
+                                        <a href="/valves/list/">View All</a>
                                     </li>
-                                </ul>
-                        </li>
-                    </ul>
-                </nav>
+                        </ul>
+                    </li>
+                </ul>
             </div>
+            <!-- #Menu -->
+            <!-- Footer -->
+            <div class="legal">
+                <div class="copyright">
+                    &copy; 2016 - 2017 <a href="javascript:void(0);">Swayan@Mishra</a>.
+                </div>
+                <div class="version">
+                    <b>Version: </b> 1.0.5
+                </div>
+            </div>
+            <!-- #Footer -->
         </aside>
+    </section>

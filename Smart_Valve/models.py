@@ -10,17 +10,12 @@ from django.utils.text import slugify
 from datetime import datetime
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import ugettext_lazy as _
+from Smart_Valve.CognitoConstants import *
 import base64
 import boto3
 from botocore.exceptions import ClientError
 
-AWS_COGNITO_APP_NAME = 'cognito-idp'
-AWS_USER_POOL_ID = 'us-east-2_CEuXbG7OK'
-AWS_REGION_NAME = "us-east-2"
-AWS_ACCESS_KEY_ID = "QUtJQUpJM080VlNKV1o3TVI1WEE="
-AWS_SECRET_KEY = "eHA1OXFkTnM2QThEay9HQzNmbUhGbnJVSXFERVE0Z2NPNHo2NTJkQw=="
-VALUE_TOPIC_SUFFIX = "_value"
-STATE_TOPIC_SUFFIX = "_state"
+
 
 
 class Organization(models.Model):
@@ -187,6 +182,22 @@ class User(AbstractBaseUser):
             super(User, self).save(*args, **kwargs)
         else:
             super(User, self).save(*args, **kwargs)
+
+    def delete(self, using=None, keep_parents=False):
+        client = boto3.client(AWS_COGNITO_APP_NAME,
+                              region_name=AWS_REGION_NAME,
+                              aws_access_key_id=base64.b64decode(AWS_ACCESS_KEY_ID),
+                              aws_secret_access_key=base64.b64decode(AWS_SECRET_KEY)
+                              )
+        response = client.admin_delete_user(
+            UserPoolId=AWS_USER_POOL_ID,
+            Username=self.username
+        )
+        print response
+        if response['ResponseMetadata']['HTTPStatusCode'] is 200:
+            super(User, self).delete(using=using, keep_parents=keep_parents)
+        else:
+            raise ValueError("Could not delete user")
 
 
 class Valve(models.Model):

@@ -1,59 +1,97 @@
+
 <!DOCTYPE html>
 <html lang="en">
-{% load crispy_forms_tags %}
+{% load widget_tweaks %}
 {% include "common/header.html" %}
 
-<body class="animsition">
-    <div class="page-wrapper">
-        <!-- HEADER MOBILE-->
-        {% include "mobile_menu_bar.html" %}
-        <!-- END HEADER MOBILE-->
-
-        <!-- MENU SIDEBAR-->
-        {% include "sidebar_menu.html" %}
-        <!-- END MENU SIDEBAR-->
-        <!-- PAGE CONTAINER-->
-        <div class="page-container">
-            <!-- HEADER DESKTOP-->
-            {% include "top-bar.html" %}
-            <!-- HEADER DESKTOP-->
-
-            <!-- MAIN CONTENT-->
-            <div class="main-content">
-                <div class="section__content section__content--p30">
-                    <div class="container-fluid">
-                        <div class="row">
-                        <div class="col-lg-6">
-                            <!-- TOP CAMPAIGN-->
-                            <div class="top-campaign">
-                                <h3 class="title-3 m-b-30">Update a Valve</h3>
-                                <form method="post">{% csrf_token %}
-                                {{ form|crispy }}
-                                    <input class="btn btn-primary" type="submit" value="Submit" />
-                                </form>
-                            </div>
-                            <!--  END TOP CAMPAIGN-->
-                        </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="copyright">
-                                    <p>Copyright © 2018 Swayan@Mishra. All rights reserved. Made with <i class="fas fa-heart"></i> in Pune</p>
-                                </div>
-                            </div>
-                        </div>
+<body class="theme-red">
+    <!-- Page Loader -->
+    <div class="page-loader-wrapper">
+        <div class="loader">
+            <div class="preloader">
+                <div class="spinner-layer pl-red">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
                     </div>
                 </div>
             </div>
-            <!-- END MAIN CONTENT-->
-            <!-- END PAGE CONTAINER-->
+            <p>Please wait...</p>
         </div>
-
     </div>
 
+    <div class="overlay"></div>
+
+    <!--TOP BAR-->
+    {% include "menu-bars/top-bar.html" %}
+
+    <section>
+        {% include "menu-bars/sidebar_menu.html" %}
+    </section>
+
+    <div class="overlay"></div>
+    <section class="content">
+        <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                    <div class="card">
+                        <div class="header">
+                            <h2>Valve Update form</h2>
+                        </div>
+                        <div class="body">
+                            <form method="post">{% csrf_token %}
+{#                                {{ form }}#}
+{#                                {{ form.name|add_label_class:"form-line" }}#}
+                                <div class="form-group form-float">
+                                <div class="form-line">
+                                    {{ form.name|add_class:"form-control"|append_attr:'required' }}
+                                    <label class="form-label">Name</label>
+{#                                            <input type="text" class="form-control" placeholder="Username">#}
+                                        </div>
+                                </div>
+                                <div class="form-group form-float">
+                                <div class="form-line">
+                                    {{ form.state_topic|add_class:"form-control"|append_attr:'required' }}
+                                    <label class="form-label">State Topic</label>
+{#                                            <input type="text" class="form-control" placeholder="Username">#}
+                                        </div>
+                                </div>
+                                <div class="form-group form-float">
+                                <div class="form-line">
+                                    {{ form.status_topic|add_class:"form-control"|append_attr:'required' }}
+                                    <label class="form-label">Status Topic</label>
+{#                                            <input type="text" class="form-control" placeholder="Username">#}
+                                        </div>
+                                </div>
+                                <div class="form-group form-float">
+                                <div class="form-line">
+                                    {{ form.imei_number|add_class:"form-control"|append_attr:'required' }}
+                                    <label class="form-label">IMEI number</label>
+{#                                            <input type="text" class="form-control" placeholder="Username">#}
+                                        </div>
+                                </div>
+                                <div class="form-group form-float">
+                                <div class="form-line">
+                                    <div class="clearfix"></div>
+                                    <br>
+                                    {{ form.users|add_class:"form-control show-tick"|append_attr:'multiple'|attr:'title:Select Users' }}
+                                    <label class="form-label">Users</label>
+{#                                            <input type="text" class="form-control" placeholder="Username">#}
+                                        </div>
+                                </div>
+                                    <input class="btn btn-primary" type="submit" value="Submit" />
+                                </form>
+                        </div>
+                    </div>
+                </div>
+        </div>
+        </div>
+    </section>
 {% include "common/footer.html" %}
-
 </body>
-
 </html>
-<!-- end document-->
+
+
+
